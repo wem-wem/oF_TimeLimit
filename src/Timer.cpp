@@ -14,22 +14,25 @@ int Timer::getFontSize() { return fontSize_; }
 void  Timer::setup() {
   fontSetup();
   loadMaxTime();
-
-  gui_.setup();
-  gui_.add(fontScale_.setup("FontSize", 100, 0, 1000));
-
-  ofLog() << fontSize_;
-  ofLog() << limit_;
-
-  ofAddListener(ofEvents().update, this, &Timer::update);
-  ofAddListener(ofEvents().draw, this, &Timer::draw);
+  guiSetup();
 }
 
-void Timer::update(ofEventArgs &args) {}
-
-void Timer::draw(ofEventArgs &args) {
+void Timer::draw() {
   drawTimer();
   gui_.draw();
+}
+
+void Timer::guiSetup() {
+  save_.addListener(this, &Timer::saveFile);
+  load_.addListener(this, &Timer::loadFile);
+
+  gui_.setup();
+  gui_.add(fontScale_.setup("FontScale", 100, 0, 1000));
+  gui_.add(maxTime_.setup("MaxTime", 60, 0, 99));
+  gui_.add(save_.setup("Save_To_File"));
+  gui_.add(load_.setup("Loda_From_File"));
+  // xmlにセーブしてある値を最初に呼び出しておく
+  gui_.loadFromFile("Game/TimerSettings.xml");
 }
 
 // フォント読み込み
@@ -40,16 +43,16 @@ void Timer::fontSetup() {
 
 // xmlファイルから制限時間の最大値をロード
 void Timer::loadMaxTime() {
-  if (xml_.loadFile("Game/timer_settings.xml")) {
-    setMaxTime(xml_.getValue("Game:TimeLimit:MaxTime", 0));
+  if (xml_.loadFile("Game/TimerSettings.xml")) {
+    setMaxTime(xml_.getValue("group:MaxTime", 0));
     resetLimit(); // 最大値のロードと同時に制限時間に同じ値を代入
   }
 }
 
 // xmlファイルからフォントサイズのロード
 void Timer::loadFontSize() {
-  if (xml_.loadFile("Game/timer_settings.xml")) {
-    setFontSize(xml_.getValue("Game:TimeLimit:FontSize", 0));
+  if (xml_.loadFile("Game/TimerSettings.xml")) {
+    setFontSize(xml_.getValue("group:FontSize", 0));
   }
 }
 
@@ -66,19 +69,17 @@ void Timer::drawTimer() {
   float fontWidth = font_.stringWidth(text);
   float fontHeight = font_.stringHeight(text);
 
-  ofTranslate(ofGetWidth()/2, 0);
+  ofTranslate(ofGetWidth() / 2, 0);
   ofScale((ofGetWidth() / fontScale_), (ofGetHeight() / fontScale_), 1);
 
-  font_.drawString(text, -fontWidth/2, fontHeight);
+  font_.drawString(text, -fontWidth / 2, fontHeight);
   ofPopMatrix();
 }
 
-void Timer::saveFile(int key) {
-  if (key == 's') {
-    gui_.saveToFile("Game/TimerSize.xml");
-  }
-  else if (key == 'l') {
-    gui_.loadFromFile("Game/TimerSize.xml");
-  }
+void Timer::saveFile() {
+  gui_.saveToFile("Game/TimerSettings.xml");
 }
 
+void Timer::loadFile() {
+  gui_.loadFromFile("Game/TimerSettings.xml");
+}

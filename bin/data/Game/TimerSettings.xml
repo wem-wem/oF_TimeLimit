@@ -1,8 +1,6 @@
-<Game>
-    <TimeLimit>
-        <MaxTime>60</MaxTime>
-        <FontSize>30</FontSize>
-    </TimeLimit>
-    <TimeLimit></TimeLimit>
-</Game>
-<Game></Game>
+<group>
+	<FontScale>225</FontScale>
+  <FontSize>30</FontSize>
+	<MaxTime>60</MaxTime>
+<group/>
+</group>
