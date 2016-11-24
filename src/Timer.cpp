@@ -64,6 +64,7 @@ void Timer::resetLimit() {
 // 画面上部、センターに表示
 void Timer::drawTimer() {
   ofPushMatrix();
+  ofPushStyle();
   ofSetColor(255, 255, 0);
   string text = ofToString((int)(limit_ - (ofGetElapsedTimef() - startTime_)));
   float fontWidth = font_.stringWidth(text);
@@ -73,6 +74,7 @@ void Timer::drawTimer() {
   ofScale((ofGetWidth() / fontScale_), (ofGetHeight() / fontScale_), 1);
 
   font_.drawString(text, -fontWidth / 2, fontHeight);
+  ofPopStyle();
   ofPopMatrix();
 }
 
